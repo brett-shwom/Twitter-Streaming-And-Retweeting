@@ -1,0 +1,16 @@
+{
+  "name": "twitter-streaming",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "redis": "^0.12.1",
+    "twit": "^1.1.20",
+    "twitter": "^1.2.1"
+  }
+}
