@@ -1,5 +1,5 @@
 {
   "host" : "127.0.0.1",
   "port" : 6379,
-  "sharedQueueKey" : "sharedQueue"
+  "shared_queue_key" : "shared_queue"
 }

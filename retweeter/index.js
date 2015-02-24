@@ -1,10 +1,10 @@
 var Twit = require('twit');
 var fs = require('fs');
 var redis = require("redis");
-var redisConfig = JSON.parse(fs.readFileSync('../redis.json', {encoding:'utf8'}));
+var redisConfig = JSON.parse(fs.readFileSync(__dirname + '/../redis.json', {encoding:'utf8'}));
 var redisClient = redis.createClient(redisConfig.port,redisConfig.host,{});
 
-if (!fs.existsSync('../secrets.json')) {
+if (!fs.existsSync(__dirname + '/../secrets.json')) {
   console.log("create a secrets.json file in the root directory. it should look like this:\n");
 
   var s = "";
@@ -22,7 +22,7 @@ if (!fs.existsSync('../secrets.json')) {
  return;
 }
 
-var secrets = fs.readFileSync('../secrets.json', {encoding:'utf8'});
+var secrets = fs.readFileSync(__dirname + '/../secrets.json', {encoding:'utf8'});
  
 secrets = JSON.parse(secrets);
 

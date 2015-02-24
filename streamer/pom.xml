@@ -27,6 +27,11 @@
       <type>jar</type>
     </dependency>
     <dependency>
+      <groupId>javax.json</groupId>
+      <artifactId>javax.json-api</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.1</version>
@@ -50,10 +55,8 @@
         <configuration>
           <mainClass>com.dragon.TwitterFilterStream</mainClass>
           <arguments>
-            <argument>${consumer.key}</argument>
-            <argument>${consumer.secret}</argument>
-            <argument>${access.token}</argument>
-            <argument>${access.token.secret}</argument>
+            <argument>${twitterSecretsPath}</argument>
+            <argument>${redisConfigurationPath}</argument>
           </arguments>
         </configuration>
       </plugin>

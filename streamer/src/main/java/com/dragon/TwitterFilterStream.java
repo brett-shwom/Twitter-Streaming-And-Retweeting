@@ -15,21 +15,62 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
+import javax.json.Json;
+import javax.json.JsonReader;
+import javax.json.JsonObject;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+
 import java.lang.InterruptedException;
+import java.lang.NumberFormatException;
+
 
 
 public class TwitterFilterStream
 {
 
 
-    public static void main( String[] args ) throws InterruptedException {
-        final Jedis redisClient = getRedisClient();
-        stream(args[0],args[1],args[2],args[3], message -> redisClient.lpush(message));
+    public static void main( String[] args ) throws InterruptedException, NumberFormatException, IOException {
+        String twitterSecretsPath = args[0];
+        String redisConfigurationPath = args[1];
+
+        JsonObject twitterSecrets = readJSONFile(twitterSecretsPath);
+        JsonObject redisConfiguration = readJSONFile(redisConfigurationPath);
+
+
+        String consumerKey = twitterSecrets.getString("consumer_key");
+        String consumerSecret= twitterSecrets.getString("consumer_secret");
+        String token = twitterSecrets.getString("access_token");
+        String tokenSecret = twitterSecrets.getString("access_token_secret");
+
+        String redisHost = redisConfiguration.getString("host");
+        int redisPort = redisConfiguration.getInt("port");
+
+        final String redisSharedQueueKey = redisConfiguration.getString("sharedQueueKey");
+
+        final Jedis redisClient = getRedisClient(redisHost, redisPort);
+
+        stream(consumerKey,consumerSecret,token,tokenSecret, message -> redisClient.lpush(redisSharedQueueKey, message));
 
     }
 
-    public static Jedis getRedisClient() {
-        return new Jedis("localhost");
+    public static JsonObject readJSONFile(String path) throws IOException {
+
+
+        InputStream fileInputStream = new FileInputStream(path);
+        JsonReader jsonReader = Json.createReader(fileInputStream);
+        JsonObject jsonObject = jsonReader.readObject();
+
+        jsonReader.close();
+        fileInputStream.close();
+
+        return jsonObject;
+    }
+
+    public static Jedis getRedisClient(String host, int port) {
+        return new Jedis(host,port);
     }
 
     public static void stream(String consumerKey, String consumerSecret, String token, String tokenSecret, Consumer<String> messageReceivedHandler) throws InterruptedException{
@@ -43,7 +84,7 @@ public class TwitterFilterStream
         StatusesFilterEndpoint hosebirdEndpoint = new StatusesFilterEndpoint();
         // Optional: set up some followings and track terms
         //List<Long> followings = Lists.newArrayList(1234L, 566788L);
-        List<String> terms = Lists.newArrayList("man");
+        List<String> terms = Lists.newArrayList("#java", "#javascript", "#fun", "#love");
         //hosebirdEndpoint.followings(followings);
         hosebirdEndpoint.trackTerms(terms);
 
